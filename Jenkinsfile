@@ -14,11 +14,11 @@ pipeline{
     */
     stages{
         stage("Make a directory"){
-            catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE")
             //options{
             //AllowFailure true
             //timeOut(time: 1, units: "minutes")}
             steps{
+                catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE")
                 sh "mkdir ~/jenkins"
             }
             post {
