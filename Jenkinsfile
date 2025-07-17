@@ -18,9 +18,9 @@ pipeline{
             //AllowFailure true
             //timeOut(time: 1, units: "minutes")}
             steps{
-                catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE")
+                script{catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE"){
                 sh "mkdir ~/jenkins"
-            }
+            }}
             post {
                 success {echo "successful stage!"}
                 failure {echo "failed"}
