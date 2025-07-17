@@ -8,6 +8,7 @@ pipeline{
                 }
             }
         }
+        }
         stage("add file"){
             steps{
                 sh "touch ~/jenkins/file.txt"
