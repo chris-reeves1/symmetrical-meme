@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage("Make a directory"){
             steps{
-                script{catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE"){
+                script(catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE"){
                 sh "mkdir ~/jenkins"
                 }
             }
@@ -17,4 +17,4 @@ pipeline{
 
     }
 }
-}
+
