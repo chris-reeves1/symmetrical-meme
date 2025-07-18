@@ -1,0 +1,70 @@
+pipeline {
+  agent any
+
+  options {
+    timeout(time: 60, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '14'))
+    disableConcurrentBuilds()
+    timestamps()
+    skipDefaultCheckout()
+    preserveStashes(buildCount: 1)
+    quietPeriod(5)
+    checkoutToSubdirectory('subdir')
+    overrideIndexTriggers(true)
+  }
+
+  stages {
+    stage('Example') {
+      options {
+        retry(3)
+        timeout(time: 10, unit: 'MINUTES')
+        skipDefaultCheckout()
+      }
+
+      steps {
+        echo 'Starting example stage'
+        sh 'echo "Running shell command"'
+        script {
+          def myVar = "hellooooo"
+          echo "myVar contents:: ${myVar}"
+          sh "mkdir subdir"
+        }
+
+        dir('subdir') {
+          writeFile(file: 'hello.txt', text: 'Hello World')
+          echo readFile('hello.txt')
+        }
+
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh 'exit 1'
+        }
+
+        retry(2) {
+          sleep time: 2, unit: 'SECONDS'
+          echo 'Retry block executed'
+        }
+
+        warnError('This will log a warning') {
+          sh 'exit 1'
+        }
+
+        writeFile(file: 'output.txt', text: 'Sample file')
+        archiveArtifacts artifacts: 'output.txt', onlyIfSuccessful: true
+
+        deleteDir()
+      }
+    }
+  }
+
+  post {
+    always {
+      echo 'Pipeline finished'
+    }
+    success {
+      echo 'Pipeline succeeded'
+    }
+    failure {
+      echo 'Pipeline failed'
+    }
+  }
+}
